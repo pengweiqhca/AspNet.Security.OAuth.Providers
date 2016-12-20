@@ -1,14 +1,13 @@
-﻿using System;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AspNet.Owin.Security.Core.Common;
-using AspNet.Owin.Security.WeChat.Provider;
+﻿using AspNet.Owin.Security.WeChat.Provider;
 using Microsoft.Owin.Infrastructure;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AspNet.Owin.Security.WeChat
 {
@@ -73,10 +72,10 @@ namespace AspNet.Owin.Security.WeChat
                 var token = await tokenResponse.Content.ReadAsStringAsync();
                 var tokenJObject = JObject.Parse(token);
 
-                string accessToken = tokenJObject.Value<string>("access_token");
-                string refreshToken = tokenJObject.Value<string>("refresh_token");
-                string expireIn = tokenJObject.Value<string>("expires_in");
-                string openId = tokenJObject.Value<string>("openid");
+                var accessToken = tokenJObject.Value<string>("access_token");
+                var refreshToken = tokenJObject.Value<string>("refresh_token");
+                var expireIn = tokenJObject.Value<string>("expires_in");
+                var openId = tokenJObject.Value<string>("openid");
 
                 if (string.IsNullOrWhiteSpace(accessToken))
                 {
@@ -195,7 +194,7 @@ namespace AspNet.Owin.Security.WeChat
         {
             if (Response.StatusCode != 401)
             {
-                return TaskHelpers.Completed();
+                return Task.FromResult(0);
             }
 
             // 查询响应的授权类型是否匹配的当前Options的授权类型的详细信息
@@ -203,18 +202,18 @@ namespace AspNet.Owin.Security.WeChat
 
             if (challenge != null)
             {
-                string baseUri =
+                var baseUri =
                     Request.Scheme +
                     Uri.SchemeDelimiter +
                     Request.Host +
                     Request.PathBase;
 
-                string currentUri =
+                var currentUri =
                     baseUri +
                     Request.Path +
                     Request.QueryString;
 
-                string redirectUri =
+                var redirectUri =
                     baseUri +
                     Options.CallbackPath;
 
@@ -226,11 +225,11 @@ namespace AspNet.Owin.Security.WeChat
                 GenerateCorrelationId(properties);
 
                 // 应用授权作用域，拥有多个作用域用逗号（,）分隔，网页应用目前仅填写snsapi_login即可
-                string scope = string.Join(", ", Options.Scope);
+                var scope = string.Join(", ", Options.Scope);
 
                 // 用于保持请求和回调的状态，授权请求后原样带回给第三方。
                 // 该参数可用于防止csrf攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加session进行校验
-                string state = Options.StateDataFormat.Protect(properties);
+                var state = Options.StateDataFormat.Protect(properties);
 
                 var authorizationEndpoint = Options.AuthorizationEndpoint +
                                             "?appid=" + Uri.EscapeDataString(Options.AppId) +
@@ -244,7 +243,7 @@ namespace AspNet.Owin.Security.WeChat
                 Options.Provider.ApplyRedirect(context);
 
             }
-            return TaskHelpers.Completed();
+            return Task.FromResult(0);
         }
     }
 }

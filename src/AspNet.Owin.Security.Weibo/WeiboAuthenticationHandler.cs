@@ -1,14 +1,13 @@
-﻿using System;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AspNet.Owin.Security.Core.Common;
-using AspNet.Owin.Security.Weibo.Provider;
+﻿using AspNet.Owin.Security.Weibo.Provider;
 using Microsoft.Owin.Infrastructure;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AspNet.Owin.Security.Weibo
 {
@@ -52,14 +51,14 @@ namespace AspNet.Owin.Security.Weibo
                 if (!ValidateCorrelationId(properties, _logger))
                     return new AuthenticationTicket(null, properties);
 
-                if (String.IsNullOrEmpty(code))
+                if (string.IsNullOrEmpty(code))
                     return new AuthenticationTicket(null, properties);
 
 
-                string requestPrefix = Request.Scheme + "://" + Request.Host;
-                string redirectUri = requestPrefix + Request.PathBase + Options.CallbackPath;
+                var requestPrefix = Request.Scheme + "://" + Request.Host;
+                var redirectUri = requestPrefix + Request.PathBase + Options.CallbackPath;
 
-                string tokenEndpoint = Options.TokenEndpoint +
+                var tokenEndpoint = Options.TokenEndpoint +
                                       "?client_id=" + Uri.EscapeDataString(Options.ClientId) +
                                       "&client_secret=" + Uri.EscapeDataString(Options.ClientSecret) +
                                       "&grant_type=code" +
@@ -71,16 +70,16 @@ namespace AspNet.Owin.Security.Weibo
 
                 var token = JObject.Parse(await tokenResponse.Content.ReadAsStringAsync());
 
-                string accessToken = token.Value<string>("access_token");
-                string expiresIn = token.Value<string>("expires_in");
+                var accessToken = token.Value<string>("access_token");
+                var expiresIn = token.Value<string>("expires_in");
 
-                if (String.IsNullOrEmpty(accessToken))
+                if (string.IsNullOrEmpty(accessToken))
                 {
                     _logger.WriteWarning("Access token was not found");
                     return new AuthenticationTicket(null, properties);
                 }
 
-                string userInformationEndpoint = Options.UserInformationEndpoint +
+                var userInformationEndpoint = Options.UserInformationEndpoint +
                                                  "?access_token=" + Uri.EscapeDataString(accessToken);
 
                 var response = await _httpClient.GetAsync(userInformationEndpoint, Request.CallCancelled);
@@ -159,7 +158,7 @@ namespace AspNet.Owin.Security.Weibo
 
                 if (!context.IsRequestCompleted && context.RedirectUri != null)
                 {
-                    string redirectUri = context.RedirectUri;
+                    var redirectUri = context.RedirectUri;
                     if (context.Identity == null)
                     {
                         // add a redirect hint that sign-in failed in some way
@@ -177,20 +176,20 @@ namespace AspNet.Owin.Security.Weibo
         {
             if (Response.StatusCode != 401)
             {
-                return TaskHelpers.Completed();
+                return Task.FromResult(0);
             }
 
             var challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
 
             if (challenge != null)
             {
-                string basrUri = Request.Scheme + Uri.SchemeDelimiter + Request.Host + Request.PathBase;
-                string currentUri = basrUri + Request.Path + Request.QueryString;
-                string redirectUri = basrUri + Options.CallbackPath;
+                var basrUri = Request.Scheme + Uri.SchemeDelimiter + Request.Host + Request.PathBase;
+                var currentUri = basrUri + Request.Path + Request.QueryString;
+                var redirectUri = basrUri + Options.CallbackPath;
 
                 var properties = challenge.Properties;
 
-                if (String.IsNullOrEmpty(properties.RedirectUri))
+                if (string.IsNullOrEmpty(properties.RedirectUri))
                     properties.RedirectUri = currentUri;
 
                 // OAuth2 10.12 CSRF
@@ -198,7 +197,7 @@ namespace AspNet.Owin.Security.Weibo
 
                 var state = Options.StateDataFormat.Protect(properties);
 
-                string authorizationEndpoint = Options.AuthorizationEndpoint +
+                var authorizationEndpoint = Options.AuthorizationEndpoint +
                                                "?client_id=" + Uri.EscapeDataString(Options.ClientId) +
                                                "&redirect_uri=" + Uri.EscapeDataString(redirectUri) +
                                                "&state=" + Uri.EscapeDataString(state);
@@ -207,7 +206,7 @@ namespace AspNet.Owin.Security.Weibo
 
                 Options.Provider.ApplyRedirect(context);
             }
-            return TaskHelpers.Completed();
+            return Task.FromResult(0);
         }
 
 

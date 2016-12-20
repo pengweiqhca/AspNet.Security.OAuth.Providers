@@ -1,11 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.Security.Claims;
-using AspNet.Owin.Security.Core.Common;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Provider;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace AspNet.Owin.Security.Tencent.Provider
 {
@@ -24,13 +23,13 @@ namespace AspNet.Owin.Security.Tencent.Provider
             RefreshToken = refreshToken;
 
             int expiresValue;
-            if (Int32.TryParse(expires, NumberStyles.Integer, CultureInfo.InvariantCulture, out expiresValue))
+            if (int.TryParse(expires, NumberStyles.Integer, CultureInfo.InvariantCulture, out expiresValue))
             {
                 ExpiresIn = TimeSpan.FromSeconds(expiresValue);
             }
-            NickName = user.GetValueOrDefault("nickname");
-            Gender = user.GetValueOrDefault("gender");
-            FigureUrl = user.GetValueOrDefault("figureurl_qq_1");
+            NickName = user["nickname"]?.ToString();
+            Gender = user["gender"]?.ToString();
+            FigureUrl = user["figureurl_qq_1"]?.ToString();
         }
 
         /// <summary>
@@ -54,6 +53,5 @@ namespace AspNet.Owin.Security.Tencent.Provider
         public TimeSpan? ExpiresIn { get; }
         public ClaimsIdentity Identity { get; set; }
         public AuthenticationProperties Properties { get; set; }
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
-using Owin;
+using AspNet.Owin.Security.Tencent;
 
-namespace AspNet.Owin.Security.Tencent
+namespace Owin
 {
     public static class TencentAuthenticationExtensions
     {

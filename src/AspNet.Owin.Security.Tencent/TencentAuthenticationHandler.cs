@@ -1,15 +1,14 @@
-﻿using System;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
-using AspNet.Owin.Security.Core.Common;
-using AspNet.Owin.Security.Tencent.Provider;
+﻿using AspNet.Owin.Security.Tencent.Provider;
 using Microsoft.Owin.Infrastructure;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace AspNet.Owin.Security.Tencent
 {
@@ -58,16 +57,16 @@ namespace AspNet.Owin.Security.Tencent
                     return new AuthenticationTicket(null, properties);
                 }
 
-                if (String.IsNullOrWhiteSpace(code))
+                if (string.IsNullOrWhiteSpace(code))
                 {
                     _logger.WriteWarning("Invalid return {0}", msg);
                     return new AuthenticationTicket(null, properties);
                 }
 
-                string requestPrefix = Request.Scheme + "://" + Request.Host;
-                string redirectUri = requestPrefix + Request.PathBase + Options.CallbackPath;
+                var requestPrefix = Request.Scheme + "://" + Request.Host;
+                var redirectUri = requestPrefix + Request.PathBase + Options.CallbackPath;
 
-                string tokenRequest = Options.TokenEndpoint +
+                var tokenRequest = Options.TokenEndpoint +
                                       "?&grant_type=authorization_code" +
                                       "&client_id=" + Uri.EscapeDataString(Options.AppId) +
                                       "&client_secret=" + Uri.EscapeDataString(Options.AppKey) +
@@ -83,9 +82,9 @@ namespace AspNet.Owin.Security.Tencent
                 // access_token=FE04************************CCE2&expires_in=7776000
                 var nameValueCollection = HttpUtility.ParseQueryString("?" + queryString);
 
-                string accessToken = nameValueCollection.Get("access_token"); // 授权令牌
-                string expires = nameValueCollection.Get("expires_in"); // 过期时间
-                string refreshToken = nameValueCollection.Get("refresh_token"); // 刷新令牌
+                var accessToken = nameValueCollection.Get("access_token"); // 授权令牌
+                var expires = nameValueCollection.Get("expires_in"); // 过期时间
+                var refreshToken = nameValueCollection.Get("refresh_token"); // 刷新令牌
 
 
                 var openIdEndpoint = Options.OptionIdEndpoint + "?access_token=" +
@@ -122,15 +121,15 @@ namespace AspNet.Owin.Security.Tencent
                         ClaimsIdentity.DefaultRoleClaimType)
                 };
 
-                if (!String.IsNullOrEmpty(context.OpenId))
+                if (!string.IsNullOrEmpty(context.OpenId))
                 {
                     context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, context.OpenId, XmlSchemaString, Options.AuthenticationType));
                 }
-                if (!String.IsNullOrEmpty(context.NickName))
+                if (!string.IsNullOrEmpty(context.NickName))
                 {
                     context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, context.NickName, XmlSchemaString, Options.AuthenticationType));
                 }
-                if (!String.IsNullOrEmpty(context.Gender))
+                if (!string.IsNullOrEmpty(context.Gender))
                 {
                     context.Identity.AddClaim(new Claim(ClaimTypes.Gender, context.Gender, XmlSchemaString, Options.AuthenticationType));
                 }
@@ -154,7 +153,7 @@ namespace AspNet.Owin.Security.Tencent
         protected override Task ApplyResponseChallengeAsync()
         {
             if (Context.Response.StatusCode != 401)
-                return TaskHelpers.Completed();
+                return Task.FromResult(0);
 
 
             // 查询响应的授权类型是否匹配的当前Options的授权类型的详细信息
@@ -162,13 +161,13 @@ namespace AspNet.Owin.Security.Tencent
 
             if (challenge != null)
             {
-                string baseUri = Request.Scheme + Uri.SchemeDelimiter + Request.Host + Request.PathBase;
-                string currentUri = baseUri + Request.Path + Request.QueryString;
-                string redirectUri = baseUri + Options.CallbackPath;
+                var baseUri = Request.Scheme + Uri.SchemeDelimiter + Request.Host + Request.PathBase;
+                var currentUri = baseUri + Request.Path + Request.QueryString;
+                var redirectUri = baseUri + Options.CallbackPath;
 
 
                 var properties = challenge.Properties;
-                if (String.IsNullOrEmpty(properties.RedirectUri))
+                if (string.IsNullOrEmpty(properties.RedirectUri))
                 {
                     properties.RedirectUri = currentUri;
                 }
@@ -177,7 +176,7 @@ namespace AspNet.Owin.Security.Tencent
                 GenerateCorrelationId(properties);
 
                 // http://wiki.open.qq.com/wiki/website/%E4%BD%BF%E7%94%A8Authorization_Code%E8%8E%B7%E5%8F%96Access_Token
-                string scope = String.Join(", ", Options.Scope);
+                var scope = string.Join(", ", Options.Scope);
 
                 // 用于保持请求和回调的状态，授权请求后原样带回给第三方。
                 // 该参数可用于防止csrf攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加session进行校验
@@ -195,7 +194,7 @@ namespace AspNet.Owin.Security.Tencent
                 Options.Provider.ApplyRedirect(context);
             }
 
-            return TaskHelpers.Completed();
+            return Task.FromResult(0);
         }
 
         public override async Task<bool> InvokeAsync()
@@ -249,6 +248,5 @@ namespace AspNet.Owin.Security.Tencent
 
             return context.IsRequestCompleted;
         }
-
     }
 }

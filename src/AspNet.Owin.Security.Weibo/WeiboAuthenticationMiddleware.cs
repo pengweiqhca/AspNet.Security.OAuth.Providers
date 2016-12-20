@@ -21,13 +21,13 @@ namespace AspNet.Owin.Security.Weibo
             IAppBuilder app,
             WeiboAuthenticationOptions options) : base(next, options)
         {
-            if (String.IsNullOrWhiteSpace(Options.ClientId))
+            if (string.IsNullOrWhiteSpace(Options.ClientId))
                 throw new ArgumentException("client_id或client_secret参数无效");
 
-            if (String.IsNullOrWhiteSpace(Options.ClientSecret))
+            if (string.IsNullOrWhiteSpace(Options.ClientSecret))
                 throw new ArgumentException("client_id或client_secret参数无效");
 
-            if (String.IsNullOrWhiteSpace(Options.SignInAsAuthenticationType))
+            if (string.IsNullOrWhiteSpace(Options.SignInAsAuthenticationType))
                 Options.SignInAsAuthenticationType = app.GetDefaultSignInAsAuthenticationType();
 
             if (Options.StateDataFormat == null)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AspNet.Owin.Security.Core.Common;
 
 namespace AspNet.Owin.Security.Weibo.Provider
 {
@@ -8,8 +7,8 @@ namespace AspNet.Owin.Security.Weibo.Provider
     {
         public WeiboAuthenticationProvider()
         {
-            OnAuthenticated = context => TaskHelpers.Completed();
-            OnReturnEndpoint = context => TaskHelpers.Completed();
+            OnAuthenticated = context => Task.FromResult(0);
+            OnReturnEndpoint = context => Task.FromResult(0);
             OnApplyRedirect = context => context.Response.Redirect(context.RedirectUri);
         }
 

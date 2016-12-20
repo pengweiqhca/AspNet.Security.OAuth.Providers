@@ -1,7 +1,7 @@
-﻿using System;
-using Owin;
+﻿using AspNet.Owin.Security.WeChat;
+using System;
 
-namespace AspNet.Owin.Security.WeChat
+namespace Owin
 {
     public static class WeChatAuthenticationExtensions
     {

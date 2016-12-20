@@ -1,7 +1,7 @@
 ﻿using System;
-using Owin;
+using AspNet.Owin.Security.Weibo;
 
-namespace AspNet.Owin.Security.Weibo
+namespace Owin
 {
     public static class WeiboAuthenticationExtensions
     {

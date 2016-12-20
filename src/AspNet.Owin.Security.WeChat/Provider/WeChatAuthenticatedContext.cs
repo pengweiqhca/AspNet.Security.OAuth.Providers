@@ -1,11 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.Security.Claims;
-using AspNet.Owin.Security.Core.Common;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Provider;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace AspNet.Owin.Security.WeChat.Provider
 {
@@ -26,17 +25,18 @@ namespace AspNet.Owin.Security.WeChat.Provider
             OpenId = openId;
             User = user;
             int expiresValue;
-            if (Int32.TryParse(expireIn, NumberStyles.Integer, CultureInfo.InvariantCulture, out expiresValue))
+            if (int.TryParse(expireIn, NumberStyles.Integer, CultureInfo.InvariantCulture, out expiresValue))
             {
                 ExpiresIn = TimeSpan.FromSeconds(expiresValue);
             }
-            NickName = user.GetValueOrDefault("nickname");
-            Sex = user.GetValueOrDefault("sex");
-            Province = user.GetValueOrDefault("province");
-            Country = user.GetValueOrDefault("country");
-            City = user.GetValueOrDefault("city");
-            Unionid = user.GetValueOrDefault("unionid");
-            HeadimgUrl = user.GetValueOrDefault("headimgurl");
+
+            NickName = user["nickname"]?.ToString();
+            Sex = user["sex"]?.ToString();
+            Province = user["province"]?.ToString();
+            Country = user["country"]?.ToString();
+            City = user["city"]?.ToString();
+            UnionId = user["unionid"]?.ToString();
+            HeadimgUrl = user["headimgurl"]?.ToString();
         }
 
         public JObject User { get; }
@@ -49,11 +49,10 @@ namespace AspNet.Owin.Security.WeChat.Provider
         public string Province { get; }
         public string Country { get; }
         public string City { get; }
-        public string Unionid { get; }
+        public string UnionId { get; }
         public string HeadimgUrl { get; }
 
         public ClaimsIdentity Identity { get; set; }
         public AuthenticationProperties Properties { get; set; }
-
     }
 }

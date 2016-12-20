@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using AspNet.Owin.Security.Tencent.Provider;
+﻿using AspNet.Owin.Security.Tencent.Provider;
 using Microsoft.Owin;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security;
@@ -8,6 +6,8 @@ using Microsoft.Owin.Security.DataHandler;
 using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.Infrastructure;
 using Owin;
+using System;
+using System.Net.Http;
 
 namespace AspNet.Owin.Security.Tencent
 {
@@ -20,10 +20,10 @@ namespace AspNet.Owin.Security.Tencent
              IAppBuilder app,
             TencentAuthenticationOptions options) : base(next, options)
         {
-            if (String.IsNullOrWhiteSpace(Options.AppId))
+            if (string.IsNullOrWhiteSpace(Options.AppId))
                 throw new ArgumentException("app_id或app_key参数无效");
 
-            if (String.IsNullOrWhiteSpace(Options.AppKey))
+            if (string.IsNullOrWhiteSpace(Options.AppKey))
                 throw new ArgumentException("app_id或app_key参数无效");
 
             if (Options.Provider == null)
@@ -36,7 +36,7 @@ namespace AspNet.Owin.Security.Tencent
                 Options.StateDataFormat = new PropertiesDataFormat(dataProtector);
             }
 
-            if (String.IsNullOrEmpty(Options.SignInAsAuthenticationType))
+            if (string.IsNullOrEmpty(Options.SignInAsAuthenticationType))
                 Options.SignInAsAuthenticationType = app.GetDefaultSignInAsAuthenticationType();
 
             _logger = app.CreateLogger<TencentAuthenticationMiddleware>();

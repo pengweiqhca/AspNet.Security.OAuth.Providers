@@ -1,11 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.Security.Claims;
-using AspNet.Owin.Security.Core.Common;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Provider;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace AspNet.Owin.Security.Weibo.Provider
 {
@@ -21,17 +20,17 @@ namespace AspNet.Owin.Security.Weibo.Provider
             AccessToken = accessToken;
 
             int expiresValue;
-            if (Int32.TryParse(expiresIn, NumberStyles.Integer, CultureInfo.InvariantCulture, out expiresValue))
+            if (int.TryParse(expiresIn, NumberStyles.Integer, CultureInfo.InvariantCulture, out expiresValue))
             {
                 ExpiresIn = TimeSpan.FromSeconds(expiresValue);
             }
 
-            Id = User.GetValueOrDefault("id");
-            NickName = User.GetValueOrDefault("screen_name");
-            Name = User.GetValueOrDefault("name");
-            Description = User.GetValueOrDefault("description");
-            Gender = user.GetValueOrDefault("gender");
-            ProfileImageUrl = user.GetValueOrDefault("profile_image_url");
+            Id = User["id"]?.ToString();
+            NickName = User["screen_name"]?.ToString();
+            Name = User["name"]?.ToString();
+            Description = User["description"]?.ToString();
+            Gender = user["gender"]?.ToString();
+            ProfileImageUrl = user["profile_image_url"]?.ToString();
         }
 
         public JObject User { get; }
@@ -64,7 +63,5 @@ namespace AspNet.Owin.Security.Weibo.Provider
 
         public ClaimsIdentity Identity { get; set; }
         public AuthenticationProperties Properties { get; set; }
-
-
     }
 }

@@ -20,10 +20,10 @@ namespace AspNet.Owin.Security.WeChat
             IAppBuilder app,
             WeChatAuthenticationOptions options) : base(next, options)
         {
-            if (String.IsNullOrWhiteSpace(Options.AppId))
+            if (string.IsNullOrWhiteSpace(Options.AppId))
                 throw new ArgumentException("app_id或app_secret参数无效");
 
-            if (String.IsNullOrWhiteSpace(Options.AppSecret))
+            if (string.IsNullOrWhiteSpace(Options.AppSecret))
                 throw new ArgumentException("app_id或app_secret参数无效");
 
             if (Options.Provider == null)
@@ -34,7 +34,7 @@ namespace AspNet.Owin.Security.WeChat
                 var dataProtector = app.CreateDataProtector(typeof(WeChatAuthenticationHandler).FullName, Options.AuthenticationType, "v1");
                 Options.StateDataFormat = new PropertiesDataFormat(dataProtector);
             }
-            if (String.IsNullOrEmpty(Options.SignInAsAuthenticationType))
+            if (string.IsNullOrEmpty(Options.SignInAsAuthenticationType))
                 Options.SignInAsAuthenticationType = app.GetDefaultSignInAsAuthenticationType();
 
             _logger = app.CreateLogger<WeChatAuthenticationMiddleware>();
