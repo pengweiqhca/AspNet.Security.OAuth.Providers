@@ -57,11 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormsAuthenticationConstants.cs" />
     <Compile Include="FormsAuthenticationExtensions.cs" />
-    <Compile Include="FormsAuthenticationTicketDataProtector.cs" />
-    <Compile Include="FormsAuthenticationTicketSerializer.cs" />
-    <Compile Include="HexEncoder.cs" />
-    <Compile Include="HexUtils.cs" />
+    <Compile Include="FormsAuthenticationOptions.cs" />
+    <Compile Include="FormsAuthenticationTicketFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

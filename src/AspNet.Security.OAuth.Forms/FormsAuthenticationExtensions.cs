@@ -2,7 +2,6 @@
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.DataHandler;
 using System;
 using System.Web.Security;
 
@@ -14,27 +13,42 @@ namespace Owin
     // http://www.dailytech5.com/news_show.aspx?id=192198
     public static class FormsAuthenticationExtensions
     {
-        public static IAppBuilder UseFormsAuthentication(this IAppBuilder app)
+        public static IAppBuilder UseFormsAuthentication(this IAppBuilder app) => UseFormsAuthentication(app, null);
+
+        public static IAppBuilder UseFormsAuthentication(this IAppBuilder app, FormsAuthenticationOptions options)
         {
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
 
-            return app.UseCookieAuthentication(new CookieAuthenticationOptions
+            var cookieOptions = new CookieAuthenticationOptions
             {
-                CookieName = FormsAuthentication.FormsCookieName,
+                AuthenticationMode = AuthenticationMode.Active,
+                AuthenticationType = FormsAuthenticationConstants.AuthenticationType,
                 CookieDomain = FormsAuthentication.CookieDomain,
+                CookieHttpOnly = true,
+                CookieName = FormsAuthentication.FormsCookieName,
                 CookiePath = FormsAuthentication.FormsCookiePath,
                 CookieSecure = CookieSecureOption.SameAsRequest,
-                LoginPath = new PathString(FormsAuthentication.LoginUrl),
-                AuthenticationMode = AuthenticationMode.Active,
                 ExpireTimeSpan = FormsAuthentication.Timeout,
-                SlidingExpiration = FormsAuthentication.SlidingExpiration,
-                AuthenticationType = "Forms",
-                TicketDataFormat = new SecureDataFormat<AuthenticationTicket>(
-                    new FormsAuthenticationTicketSerializer("Forms"),
-                    new FormsAuthenticationTicketDataProtector(),
-                    new HexEncoder())
-            });
+                LoginPath = new PathString(FormsAuthentication.LoginUrl),
+                ReturnUrlParameter = "ReturnUrl",
+                SlidingExpiration = FormsAuthentication.SlidingExpiration
+            };
+            cookieOptions.TicketDataFormat = new FormsAuthenticationTicketFormat(cookieOptions);
+
+            if (options != null)
+            {
+                cookieOptions.CookieManager = options.CookieManager;
+                cookieOptions.CookieSecure = options.CookieSecure;
+                cookieOptions.Description = options.Description;
+                cookieOptions.LogoutPath = options.LogoutPath;
+                cookieOptions.Provider = options.Provider;
+                cookieOptions.ReturnUrlParameter = options.ReturnUrlParameter;
+                //cookieOptions.SessionStore = options.SessionStore;
+                cookieOptions.SystemClock = options.SystemClock;
+            }
+
+            return app.UseCookieAuthentication(cookieOptions);
         }
     }
 }
