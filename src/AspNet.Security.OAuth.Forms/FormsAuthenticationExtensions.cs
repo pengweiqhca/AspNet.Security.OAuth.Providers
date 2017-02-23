@@ -14,7 +14,7 @@ namespace Owin
     // http://www.dailytech5.com/news_show.aspx?id=192198
     public static class FormsAuthenticationExtensions
     {
-        public static IAppBuilder UseFormAuthentication(this IAppBuilder app)
+        public static IAppBuilder UseFormsAuthentication(this IAppBuilder app)
         {
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
